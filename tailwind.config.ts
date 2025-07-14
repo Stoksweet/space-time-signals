@@ -61,7 +61,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Brand colors
+				'st-green': 'hsl(var(--st-green))',
+				'st-red': 'hsl(var(--st-red))',
+				'st-blue': 'hsl(var(--st-blue))',
+				'st-yellow': 'hsl(var(--st-yellow))'
+			},
+			fontFamily: {
+				'inter': ['Inter', 'sans-serif'],
+			},
+			backgroundImage: {
+				'gradient-brand': 'var(--gradient-brand)',
+				'gradient-hero': 'var(--gradient-hero)'
+			},
+			boxShadow: {
+				'brand': 'var(--shadow-brand)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
