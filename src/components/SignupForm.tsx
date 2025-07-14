@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Megaphone, Building, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SignupFormProps {
   isOpen: boolean;
@@ -39,8 +40,22 @@ export const SignupForm = ({ isOpen, onClose }: SignupFormProps) => {
     setIsSubmitting(true);
 
     try {
-      // Since Supabase isn't connected, we'll simulate the submission
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const { error } = await supabase
+        .from('waiting_list')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone || null,
+            company: formData.company || null,
+            type: formData.type,
+            consent: formData.consent
+          }
+        ]);
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Welcome to the waiting list! 🎉",
@@ -59,6 +74,7 @@ export const SignupForm = ({ isOpen, onClose }: SignupFormProps) => {
       
       onClose();
     } catch (error) {
+      console.error('Error saving to waiting list:', error);
       toast({
         title: "Something went wrong",
         description: "Please try again later or contact us directly.",
