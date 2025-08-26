@@ -40,9 +40,8 @@ export const VenueMap = () => {
       setVenues(data || []);
     } catch (error) {
       console.error('Error:', error);
-    } finally {
-      setIsLoading(false);
     }
+    // Don't set loading to false here - let the map initialization handle it
   };
 
   useEffect(() => {
@@ -66,25 +65,24 @@ export const VenueMap = () => {
         setHasApiKey(true);
         await initializeMap(data.apiKey);
         setMapInitialized(true);
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error during map initialization:', error);
         setHasApiKey(false);
         setIsLoading(false);
       }
     };
 
-    // Add a small delay to ensure DOM is fully ready, especially on refresh
-    const timer = setTimeout(() => {
-      if (venues.length > 0) {
-        console.log('Attempting to initialize map with', venues.length, 'venues');
+    if (venues.length > 0) {
+      console.log('Attempting to initialize map with', venues.length, 'venues');
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
         initializeMapWhenReady();
-      } else {
-        console.log('No venues yet...');
-        setIsLoading(false);
-      }
-    }, 250);
-
-    return () => clearTimeout(timer);
+      });
+    } else if (venues.length === 0) {
+      console.log('No venues yet...');
+      // Keep loading until we have venues and map is ready
+    }
   }, [venues, mapInitialized]);
 
   const initializeMap = async (apiKey: string) => {
