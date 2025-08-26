@@ -45,16 +45,32 @@ export const VenueMap = () => {
   };
 
   useEffect(() => {
-    // Check if Google Maps API key is available
-    const apiKey = "YOUR_GOOGLE_MAPS_API_KEY"; // This should be replaced with actual API key
-    if (!apiKey || apiKey === "YOUR_GOOGLE_MAPS_API_KEY") {
-      setHasApiKey(false);
+    const fetchApiKeyAndInitialize = async () => {
+      try {
+        // Fetch the API key from Supabase edge function
+        const { data, error } = await supabase.functions.invoke('get-google-maps-key');
+        
+        if (error || !data?.apiKey) {
+          console.error('Error fetching Google Maps API key:', error);
+          setHasApiKey(false);
+          setIsLoading(false);
+          return;
+        }
+        
+        setHasApiKey(true);
+        initializeMap(data.apiKey);
+      } catch (error) {
+        console.error('Error:', error);
+        setHasApiKey(false);
+        setIsLoading(false);
+      }
+    };
+
+    if (venues.length > 0) {
+      fetchApiKeyAndInitialize();
+    } else {
       setIsLoading(false);
-      return;
     }
-    
-    setHasApiKey(true);
-    initializeMap(apiKey);
   }, [venues]);
 
   const initializeMap = async (apiKey: string) => {
