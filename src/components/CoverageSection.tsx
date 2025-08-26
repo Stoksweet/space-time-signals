@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { MapPin, Monitor, Building, Users, Calendar, TrendingUp } from "lucide-react";
+import { MapPin, Building, Users, TrendingUp } from "lucide-react";
+import { VenueMap } from "./VenueMap";
 
 export const CoverageSection = () => {
   const stats = [
@@ -24,19 +25,10 @@ export const CoverageSection = () => {
           </p>
         </div>
 
-        {/* Map Placeholder - In real implementation, this would be an interactive map */}
+        {/* Interactive Venue Map */}
         <div className="mb-16">
           <Card className="p-8 bg-gradient-hero border-0 shadow-brand">
-            <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
-              <div className="text-center space-y-4">
-                <MapPin className="h-16 w-16 text-primary mx-auto" />
-                <h3 className="text-2xl font-semibold">Interactive Coverage Map</h3>
-                <p className="text-muted-foreground max-w-md">
-                  Dynamic map showing real-time venue locations, screen availability, 
-                  and coverage areas across the city
-                </p>
-              </div>
-            </div>
+            <VenueMap />
           </Card>
         </div>
 
