@@ -3,11 +3,9 @@ import { MapPin, Monitor, Building, Users, Calendar, TrendingUp } from "lucide-r
 
 export const CoverageSection = () => {
   const stats = [
-    { icon: Monitor, label: "Smart TVs", value: "250+", color: "text-st-green" },
-    { icon: Building, label: "Venues", value: "85+", color: "text-st-blue" },
-    { icon: MapPin, label: "Locations", value: "12", color: "text-st-red" },
-    { icon: Users, label: "Daily Reach", value: "15K+", color: "text-st-yellow" },
-    { icon: Calendar, label: "Available Slots", value: "500+", color: "text-primary" },
+    { icon: Building, label: "Sites", value: "50 (Pending)", color: "text-st-blue" },
+    { icon: MapPin, label: "Towns", value: "3", color: "text-st-red", subtitle: "Sea Point, Green Point, Cape Town CBD" },
+    { icon: Users, label: "Daily Reach", value: "up to 15K+", color: "text-st-yellow" },
   ];
 
   return (
@@ -43,12 +41,17 @@ export const CoverageSection = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow duration-200">
               <stat.icon className={`h-12 w-12 mx-auto mb-4 ${stat.color}`} />
               <div className="text-3xl font-bold mb-2">{stat.value}</div>
               <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+              {stat.subtitle && (
+                <div className="text-xs text-muted-foreground mt-2 max-w-48 mx-auto">
+                  {stat.subtitle}
+                </div>
+              )}
             </Card>
           ))}
         </div>
