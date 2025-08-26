@@ -81,6 +81,9 @@ export const PricingSection = () => {
             <p className="text-lg text-muted-foreground">
               <span className="font-semibold text-primary">R2 per 60-second slot</span> • Minimum Package: 360 slots = R1000
             </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Each slot = 60 seconds of ad time on a single screen on our network
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -110,7 +113,7 @@ export const PricingSection = () => {
         {/* Model 2: Commission on Conversion */}
         <div>
           <div className="text-center mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">Commission on Conversion</h3>
+            <h3 className="text-2xl md:text-3xl font-bold mb-4">Pay-as-you-close</h3>
             <p className="text-lg text-muted-foreground">
               Applied in addition to slot-based pricing • Tracked via platform analytics
             </p>
