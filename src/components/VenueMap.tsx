@@ -20,6 +20,7 @@ export const VenueMap = () => {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [mapInitialized, setMapInitialized] = useState(false);
 
   useEffect(() => {
     fetchVenues();
@@ -45,10 +46,13 @@ export const VenueMap = () => {
   };
 
   useEffect(() => {
-    const fetchApiKeyAndInitialize = async () => {
+    const initializeMapWhenReady = async () => {
+      if (!venues.length || !mapRef.current || mapInitialized) {
+        return;
+      }
+
       try {
         console.log('Fetching Google Maps API key...');
-        // Fetch the API key from Supabase edge function
         const { data, error } = await supabase.functions.invoke('get-google-maps-key');
         
         if (error || !data?.apiKey) {
@@ -60,11 +64,8 @@ export const VenueMap = () => {
         
         console.log('API key received, initializing map...');
         setHasApiKey(true);
-        
-        // Add a small delay to ensure the DOM element is ready
-        setTimeout(() => {
-          initializeMap(data.apiKey);
-        }, 100);
+        await initializeMap(data.apiKey);
+        setMapInitialized(true);
       } catch (error) {
         console.error('Error:', error);
         setHasApiKey(false);
@@ -72,32 +73,29 @@ export const VenueMap = () => {
       }
     };
 
-    if (venues.length > 0 && mapRef.current) {
-      console.log('Venues loaded:', venues.length, 'venues, DOM ready');
-      fetchApiKeyAndInitialize();
-    } else if (venues.length > 0) {
-      console.log('Venues loaded but DOM not ready, waiting...');
-      // Wait a bit for DOM to be ready
-      setTimeout(() => {
-        if (mapRef.current) {
-          fetchApiKeyAndInitialize();
-        }
-      }, 200);
-    } else {
-      console.log('No venues yet...');
-      setIsLoading(false);
-    }
-  }, [venues]);
+    // Add a small delay to ensure DOM is fully ready, especially on refresh
+    const timer = setTimeout(() => {
+      if (venues.length > 0) {
+        console.log('Attempting to initialize map with', venues.length, 'venues');
+        initializeMapWhenReady();
+      } else {
+        console.log('No venues yet...');
+        setIsLoading(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [venues, mapInitialized]);
 
   const initializeMap = async (apiKey: string) => {
     if (!mapRef.current) {
       console.log('Map ref not ready:', mapRef.current);
-      return;
+      throw new Error('Map container not ready');
     }
     
     if (venues.length === 0) {
       console.log('No venues available:', venues.length);
-      return;
+      throw new Error('No venues available');
     }
     
     console.log('Map initialization starting with', venues.length, 'venues');
@@ -118,11 +116,12 @@ export const VenueMap = () => {
       const map = new Map(mapRef.current, {
         center: { lat: -33.9249, lng: 18.4241 },
         zoom: 12,
-        // Remove mapId as it might be causing issues
       });
 
+      console.log('Adding markers for', venues.length, 'venues...');
       // Add markers for each venue
-      venues.forEach((venue) => {
+      venues.forEach((venue, index) => {
+        console.log(`Adding marker ${index + 1} for ${venue.name}`);
         const markerContent = createMarkerContent(venue);
         
         new AdvancedMarkerElement({
@@ -132,8 +131,13 @@ export const VenueMap = () => {
           title: venue.name
         });
       });
+      
+      console.log('Map successfully initialized with all markers');
+      setIsLoading(false);
     } catch (error) {
       console.error('Error initializing map:', error);
+      setIsLoading(false);
+      throw error;
     }
   };
 
