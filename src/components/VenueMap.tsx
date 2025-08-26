@@ -216,6 +216,22 @@ export const VenueMap = () => {
     const setupMap = async () => {
       log('Setting up map with venues...', { venueCount: venues.length });
       
+      // Wait for DOM to be ready
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      if (cancelled) return;
+      
+      // Check if map ref is ready
+      if (!mapRef.current) {
+        log('Map container still not ready, retrying...');
+        setTimeout(() => {
+          if (!cancelled && mapRef.current && venues.length > 0) {
+            setupMap();
+          }
+        }, 500);
+        return;
+      }
+      
       // Step 2: Fetch API key
       const apiKey = await fetchApiKey();
       
