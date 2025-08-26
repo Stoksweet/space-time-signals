@@ -60,7 +60,11 @@ export const VenueMap = () => {
         
         console.log('API key received, initializing map...');
         setHasApiKey(true);
-        initializeMap(data.apiKey);
+        
+        // Add a small delay to ensure the DOM element is ready
+        setTimeout(() => {
+          initializeMap(data.apiKey);
+        }, 100);
       } catch (error) {
         console.error('Error:', error);
         setHasApiKey(false);
@@ -68,9 +72,17 @@ export const VenueMap = () => {
       }
     };
 
-    if (venues.length > 0) {
-      console.log('Venues loaded:', venues.length, 'venues');
+    if (venues.length > 0 && mapRef.current) {
+      console.log('Venues loaded:', venues.length, 'venues, DOM ready');
       fetchApiKeyAndInitialize();
+    } else if (venues.length > 0) {
+      console.log('Venues loaded but DOM not ready, waiting...');
+      // Wait a bit for DOM to be ready
+      setTimeout(() => {
+        if (mapRef.current) {
+          fetchApiKeyAndInitialize();
+        }
+      }, 200);
     } else {
       console.log('No venues yet...');
       setIsLoading(false);
@@ -78,10 +90,17 @@ export const VenueMap = () => {
   }, [venues]);
 
   const initializeMap = async (apiKey: string) => {
-    if (!mapRef.current || venues.length === 0) {
-      console.log('Map ref or venues not ready');
+    if (!mapRef.current) {
+      console.log('Map ref not ready:', mapRef.current);
       return;
     }
+    
+    if (venues.length === 0) {
+      console.log('No venues available:', venues.length);
+      return;
+    }
+    
+    console.log('Map initialization starting with', venues.length, 'venues');
 
     try {
       console.log('Loading Google Maps API...');
