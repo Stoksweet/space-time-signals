@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HeroSection } from "./HeroSection";
 import { CoverageSection } from "./CoverageSection";
 import { PricingSection } from "./PricingSection";
+import { FAQSection } from "./FAQSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { SignupForm } from "./SignupForm";
 import { Footer } from "./Footer";
@@ -18,6 +19,7 @@ export const SpaceTimeLanding = () => {
       <HeroSection onJoinWaitlist={handleJoinWaitlist} />
       <CoverageSection />
       <PricingSection />
+      <FAQSection />
       <HowItWorksSection />
       <Footer />
       
