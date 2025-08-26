@@ -15,91 +15,97 @@ type Venue = {
   screen_count: number;
 }
 
+type MapState = 'loading' | 'loaded' | 'error' | 'no-api-key' | 'no-venues';
+
 export const VenueMap = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
   const [venues, setVenues] = useState<Venue[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasApiKey, setHasApiKey] = useState(false);
-  const [mapInitialized, setMapInitialized] = useState(false);
+  const [mapState, setMapState] = useState<MapState>('loading');
+  const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    fetchVenues();
-  }, []);
+  // Debug logging helper
+  const log = (message: string, data?: any) => {
+    console.log(`[VenueMap] ${message}`, data || '');
+  };
 
+  // Fetch venues from database
   const fetchVenues = async () => {
+    log('Fetching venues from database...');
     try {
       const { data, error } = await supabase
         .from('venues')
         .select('*');
       
       if (error) {
-        console.error('Error fetching venues:', error);
+        log('Error fetching venues:', error);
+        setError(`Database error: ${error.message}`);
+        setMapState('error');
         return;
       }
       
+      log('Venues fetched successfully', { count: data?.length || 0 });
       setVenues(data || []);
+      
+      if (!data || data.length === 0) {
+        setMapState('no-venues');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      log('Unexpected error fetching venues:', error);
+      setError('Failed to load venue data');
+      setMapState('error');
     }
-    // Don't set loading to false here - let the map initialization handle it
   };
 
-  useEffect(() => {
-    const initializeMapWhenReady = async () => {
-      if (!venues.length || !mapRef.current || mapInitialized) {
-        return;
+  // Fetch Google Maps API key
+  const fetchApiKey = async (): Promise<string | null> => {
+    log('Fetching Google Maps API key...');
+    try {
+      const { data, error } = await supabase.functions.invoke('get-google-maps-key');
+      
+      if (error) {
+        log('Error fetching API key:', error);
+        setError(`API key error: ${error.message}`);
+        setMapState('no-api-key');
+        return null;
       }
-
-      try {
-        console.log('Fetching Google Maps API key...');
-        const { data, error } = await supabase.functions.invoke('get-google-maps-key');
-        
-        if (error || !data?.apiKey) {
-          console.error('Error fetching Google Maps API key:', error);
-          setHasApiKey(false);
-          setIsLoading(false);
-          return;
-        }
-        
-        console.log('API key received, initializing map...');
-        setHasApiKey(true);
-        await initializeMap(data.apiKey);
-        setMapInitialized(true);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error during map initialization:', error);
-        setHasApiKey(false);
-        setIsLoading(false);
+      
+      if (!data?.apiKey) {
+        log('No API key in response:', data);
+        setError('Google Maps API key not configured');
+        setMapState('no-api-key');
+        return null;
       }
-    };
-
-    if (venues.length > 0) {
-      console.log('Attempting to initialize map with', venues.length, 'venues');
-      // Use requestAnimationFrame to ensure DOM is ready
-      requestAnimationFrame(() => {
-        initializeMapWhenReady();
-      });
-    } else if (venues.length === 0) {
-      console.log('No venues yet...');
-      // Keep loading until we have venues and map is ready
+      
+      log('API key fetched successfully');
+      return data.apiKey;
+    } catch (error) {
+      log('Unexpected error fetching API key:', error);
+      setError('Failed to fetch Google Maps API key');
+      setMapState('no-api-key');
+      return null;
     }
-  }, [venues, mapInitialized]);
+  };
 
+  // Initialize Google Maps
   const initializeMap = async (apiKey: string) => {
     if (!mapRef.current) {
-      console.log('Map ref not ready:', mapRef.current);
-      throw new Error('Map container not ready');
+      log('Map container ref not available');
+      setError('Map container not ready');
+      setMapState('error');
+      return;
     }
-    
+
     if (venues.length === 0) {
-      console.log('No venues available:', venues.length);
-      throw new Error('No venues available');
+      log('No venues available for map');
+      setMapState('no-venues');
+      return;
     }
-    
-    console.log('Map initialization starting with', venues.length, 'venues');
+
+    log('Initializing Google Maps...', { venueCount: venues.length });
 
     try {
-      console.log('Loading Google Maps API...');
+      // Load Google Maps API
       const loader = new Loader({
         apiKey,
         version: "weekly",
@@ -109,36 +115,51 @@ export const VenueMap = () => {
       const { Map } = await loader.importLibrary("maps");
       const { AdvancedMarkerElement } = await loader.importLibrary("marker");
 
-      console.log('Creating map...');
-      // Center map on Cape Town
+      log('Google Maps API loaded, creating map instance...');
+
+      // Create map instance
       const map = new Map(mapRef.current, {
         center: { lat: -33.9249, lng: 18.4241 },
         zoom: 12,
+        mapId: "space-time-venues-map"
       });
 
-      console.log('Adding markers for', venues.length, 'venues...');
-      // Add markers for each venue
-      venues.forEach((venue, index) => {
-        console.log(`Adding marker ${index + 1} for ${venue.name}`);
-        const markerContent = createMarkerContent(venue);
-        
-        new AdvancedMarkerElement({
-          map,
-          position: { lat: venue.latitude, lng: venue.longitude },
-          content: markerContent,
-          title: venue.name
-        });
-      });
+      mapInstanceRef.current = map;
+      log('Map instance created successfully');
+
+      // Add venue markers
+      log('Adding venue markers...');
+      let markersAdded = 0;
       
-      console.log('Map successfully initialized with all markers');
-      setIsLoading(false);
+      venues.forEach((venue, index) => {
+        try {
+          const markerContent = createMarkerContent(venue);
+          
+          new AdvancedMarkerElement({
+            map,
+            position: { lat: venue.latitude, lng: venue.longitude },
+            content: markerContent,
+            title: venue.name
+          });
+          
+          markersAdded++;
+          log(`Added marker ${index + 1}/${venues.length} for ${venue.name}`);
+        } catch (markerError) {
+          log(`Failed to add marker for ${venue.name}:`, markerError);
+        }
+      });
+
+      log(`Map initialization complete! Added ${markersAdded}/${venues.length} markers`);
+      setMapState('loaded');
+      
     } catch (error) {
-      console.error('Error initializing map:', error);
-      setIsLoading(false);
-      throw error;
+      log('Error initializing map:', error);
+      setError(`Map initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setMapState('error');
     }
   };
 
+  // Create marker content
   const createMarkerContent = (venue: Venue) => {
     const markerDiv = document.createElement('div');
     markerDiv.className = 'relative';
@@ -150,7 +171,7 @@ export const VenueMap = () => {
       <div class="relative">
         <div class="w-8 h-8 ${statusColor} rounded-full border-2 border-white shadow-lg flex items-center justify-center">
           <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
         </div>
         <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs font-medium whitespace-nowrap border">
@@ -162,7 +183,68 @@ export const VenueMap = () => {
     return markerDiv;
   };
 
-  if (isLoading) {
+  // Main initialization effect
+  useEffect(() => {
+    let cancelled = false;
+
+    const initializeEverything = async () => {
+      log('Starting map initialization process...');
+      
+      // Step 1: Fetch venues
+      await fetchVenues();
+      
+      if (cancelled) return;
+      
+      // Wait for venues to be set in state
+      await new Promise(resolve => setTimeout(resolve, 100));
+    };
+
+    initializeEverything();
+
+    return () => {
+      cancelled = true;
+      log('Cleanup: Map initialization cancelled');
+    };
+  }, []);
+
+  // Effect to initialize map when venues are available
+  useEffect(() => {
+    if (venues.length === 0 || mapState !== 'loading') return;
+
+    let cancelled = false;
+
+    const setupMap = async () => {
+      log('Setting up map with venues...', { venueCount: venues.length });
+      
+      // Step 2: Fetch API key
+      const apiKey = await fetchApiKey();
+      
+      if (cancelled || !apiKey) return;
+      
+      // Step 3: Initialize map
+      await initializeMap(apiKey);
+    };
+
+    setupMap();
+
+    return () => {
+      cancelled = true;
+      log('Cleanup: Map setup cancelled');
+    };
+  }, [venues]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      if (mapInstanceRef.current) {
+        log('Cleanup: Destroying map instance');
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Render based on state
+  if (mapState === 'loading') {
     return (
       <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
         <div className="text-center space-y-4">
@@ -173,18 +255,51 @@ export const VenueMap = () => {
     );
   }
 
-  if (!hasApiKey) {
+  if (mapState === 'error') {
+    return (
+      <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-red-300">
+        <div className="text-center space-y-4 max-w-md">
+          <MapPin className="h-16 w-16 text-red-500 mx-auto" />
+          <h3 className="text-2xl font-semibold text-red-700">Map Error</h3>
+          <p className="text-red-600 text-sm">{error}</p>
+          <button 
+            onClick={() => {
+              setMapState('loading');
+              setError('');
+              fetchVenues();
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (mapState === 'no-venues') {
     return (
       <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
         <div className="text-center space-y-4">
           <MapPin className="h-16 w-16 text-primary mx-auto" />
-          <h3 className="text-2xl font-semibold">Interactive Coverage Map</h3>
+          <h3 className="text-2xl font-semibold">No Venues Available</h3>
           <p className="text-muted-foreground max-w-md">
-            Google Maps integration ready - API key needed to display live venue locations
+            No venue data found in the database. Check back later for venue locations.
           </p>
-          <div className="text-sm text-muted-foreground">
-            Found {venues.length} venues in database
-          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (mapState === 'no-api-key') {
+    return (
+      <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
+        <div className="text-center space-y-4">
+          <MapPin className="h-16 w-16 text-primary mx-auto" />
+          <h3 className="text-2xl font-semibold">Map Configuration Required</h3>
+          <p className="text-muted-foreground max-w-md">
+            Google Maps API key needed to display venue locations. Found {venues.length} venues in database.
+          </p>
         </div>
       </div>
     );
