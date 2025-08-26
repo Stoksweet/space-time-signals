@@ -24,7 +24,7 @@ export const HeroSection = ({ onJoinWaitlist }: HeroSectionProps) => {
             <img 
               src="/lovable-uploads/dad7dc46-c8e6-4569-8adf-de90c87a4fe3.png" 
               alt="Space Time Advertising" 
-              className="w-24 h-24 md:w-32 md:h-32 animate-pulse hover:animate-none transition-all duration-300"
+              className="w-24 h-24 md:w-32 md:h-32"
             />
           </div>
 

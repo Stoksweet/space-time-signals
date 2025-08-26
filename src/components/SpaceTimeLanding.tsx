@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { HeroSection } from "./HeroSection";
 import { CoverageSection } from "./CoverageSection";
+import { PricingSection } from "./PricingSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { SignupForm } from "./SignupForm";
 import { Footer } from "./Footer";
@@ -16,6 +17,7 @@ export const SpaceTimeLanding = () => {
     <div className="min-h-screen">
       <HeroSection onJoinWaitlist={handleJoinWaitlist} />
       <CoverageSection />
+      <PricingSection />
       <HowItWorksSection />
       <Footer />
       
