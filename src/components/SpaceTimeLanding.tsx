@@ -17,10 +17,10 @@ export const SpaceTimeLanding = () => {
   return (
     <div className="min-h-screen">
       <HeroSection onJoinWaitlist={handleJoinWaitlist} />
+      <HowItWorksSection />
       <CoverageSection />
       <PricingSection />
       <FAQSection />
-      <HowItWorksSection />
       <Footer />
       
       <SignupForm 
