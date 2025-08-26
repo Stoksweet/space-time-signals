@@ -88,22 +88,35 @@ export const VenueMap = () => {
       const loader = new Loader({
         apiKey,
         version: "weekly",
-        libraries: ["marker"]
+        libraries: ["marker", "maps"]
       });
 
+      // Try to load the Maps library first to catch API key errors
       const { Map } = await loader.importLibrary("maps");
+      console.log('Maps library loaded successfully');
+
+      // Only try to load markers if Maps loaded successfully
       const { AdvancedMarkerElement } = await loader.importLibrary("marker");
+      console.log('Marker library loaded successfully');
 
       console.log('Creating map...');
-      // Center map on Cape Town
+      // Create a simple map without advanced features first
       const map = new Map(mapRef.current, {
         center: { lat: -33.9249, lng: 18.4241 },
         zoom: 12,
-        // Remove mapId as it might be causing issues
+        disableDefaultUI: false,
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: true,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: true
       });
 
+      console.log('Map created, adding markers...');
       // Add markers for each venue
-      venues.forEach((venue) => {
+      venues.forEach((venue, index) => {
+        console.log(`Adding marker ${index + 1} for ${venue.name}`);
         const markerContent = createMarkerContent(venue);
         
         new AdvancedMarkerElement({
@@ -113,8 +126,12 @@ export const VenueMap = () => {
           title: venue.name
         });
       });
+      
+      console.log('All markers added successfully');
     } catch (error) {
       console.error('Error initializing map:', error);
+      setHasApiKey(false);
+      setIsLoading(false);
     }
   };
 
