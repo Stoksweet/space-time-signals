@@ -47,6 +47,7 @@ export const VenueMap = () => {
   useEffect(() => {
     const fetchApiKeyAndInitialize = async () => {
       try {
+        console.log('Fetching Google Maps API key...');
         // Fetch the API key from Supabase edge function
         const { data, error } = await supabase.functions.invoke('get-google-maps-key');
         
@@ -57,6 +58,7 @@ export const VenueMap = () => {
           return;
         }
         
+        console.log('API key received, initializing map...');
         setHasApiKey(true);
         initializeMap(data.apiKey);
       } catch (error) {
@@ -67,16 +69,22 @@ export const VenueMap = () => {
     };
 
     if (venues.length > 0) {
+      console.log('Venues loaded:', venues.length, 'venues');
       fetchApiKeyAndInitialize();
     } else {
+      console.log('No venues yet...');
       setIsLoading(false);
     }
   }, [venues]);
 
   const initializeMap = async (apiKey: string) => {
-    if (!mapRef.current || venues.length === 0) return;
+    if (!mapRef.current || venues.length === 0) {
+      console.log('Map ref or venues not ready');
+      return;
+    }
 
     try {
+      console.log('Loading Google Maps API...');
       const loader = new Loader({
         apiKey,
         version: "weekly",
@@ -86,11 +94,12 @@ export const VenueMap = () => {
       const { Map } = await loader.importLibrary("maps");
       const { AdvancedMarkerElement } = await loader.importLibrary("marker");
 
+      console.log('Creating map...');
       // Center map on Cape Town
       const map = new Map(mapRef.current, {
         center: { lat: -33.9249, lng: 18.4241 },
         zoom: 12,
-        mapId: "spacetime-venues-map"
+        // Remove mapId as it might be causing issues
       });
 
       // Add markers for each venue
@@ -161,8 +170,12 @@ export const VenueMap = () => {
   }
 
   return (
-    <div className="w-full h-full">
-      <div ref={mapRef} className="aspect-video rounded-lg w-full h-full min-h-[400px]" />
+    <div className="w-full h-full min-h-[400px]">
+      <div 
+        ref={mapRef} 
+        className="w-full h-full min-h-[400px] rounded-lg"
+        style={{ height: '400px', width: '100%' }}
+      />
     </div>
   );
 };
