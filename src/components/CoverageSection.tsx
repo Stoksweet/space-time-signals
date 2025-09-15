@@ -27,18 +27,18 @@ export const CoverageSection = () => {
 
         {/* WhatsApp Community CTA */}
         <div className="mb-16">
-          <Card className="p-12 bg-gradient-hero border-0 shadow-brand text-center">
-            <MessageCircle className="h-20 w-20 mx-auto mb-6 text-white" />
+          <Card className="p-12 bg-slate-900 border-0 shadow-brand text-center">
+            <MessageCircle className="h-20 w-20 mx-auto mb-6 text-green-400" />
             <h3 className="text-3xl font-bold text-white mb-4">
               Join Our Community
             </h3>
-            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-slate-200 text-lg mb-8 max-w-2xl mx-auto">
               Connect with fellow advertisers, share insights, and stay updated on new venue additions and advertising opportunities.
             </p>
             <Button 
               asChild 
               size="lg" 
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 text-lg font-semibold"
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 text-lg font-semibold shadow-lg"
             >
               <a 
                 href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 

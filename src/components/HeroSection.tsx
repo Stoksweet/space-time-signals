@@ -1,11 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Megaphone } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 
-interface HeroSectionProps {
-  onJoinWaitlist: () => void;
-}
-
-export const HeroSection = ({ onJoinWaitlist }: HeroSectionProps) => {
+export const HeroSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
       {/* Background Logo Watermark */}
@@ -56,13 +52,19 @@ export const HeroSection = ({ onJoinWaitlist }: HeroSectionProps) => {
           {/* Primary CTA */}
           <div className="pt-8">
             <Button 
+              asChild
               size="lg" 
-              className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 shadow-brand transform hover:scale-105 transition-all duration-200"
-              onClick={onJoinWaitlist}
+              className="text-lg px-8 py-4 bg-green-500 hover:bg-green-600 text-white shadow-brand transform hover:scale-105 transition-all duration-200"
             >
-              <Megaphone className="mr-2 h-5 w-5" />
-              Join the Waiting List
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <a 
+                href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="mr-2 h-5 w-5" />
+                Join our WhatsApp community
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
             </Button>
           </div>
 
