@@ -132,9 +132,15 @@ export const HowItWorksSection = () => {
               : "Ready to monetize your screens and delight customers?"
             }
           </p>
-          <Button size="lg" className="bg-accent hover:bg-accent/90">
-            Get Started Today
-            <ArrowRight className="ml-2 h-5 w-5" />
+          <Button asChild size="lg" className="bg-green-500 hover:bg-green-600 text-white">
+            <a 
+              href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Get Started Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </a>
           </Button>
         </div>
       </div>
