@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { MapPin, Building, Users, TrendingUp } from "lucide-react";
-import { VenueMap } from "./VenueMap";
+import { Button } from "@/components/ui/button";
+import { MapPin, Building, Users, TrendingUp, MessageCircle } from "lucide-react";
 
 export const CoverageSection = () => {
   const stats = [
@@ -25,10 +25,29 @@ export const CoverageSection = () => {
           </p>
         </div>
 
-        {/* Interactive Venue Map */}
+        {/* WhatsApp Community CTA */}
         <div className="mb-16">
-          <Card className="p-8 bg-gradient-hero border-0 shadow-brand">
-            <VenueMap />
+          <Card className="p-12 bg-gradient-hero border-0 shadow-brand text-center">
+            <MessageCircle className="h-20 w-20 mx-auto mb-6 text-white" />
+            <h3 className="text-3xl font-bold text-white mb-4">
+              Join Our Community
+            </h3>
+            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+              Connect with fellow advertisers, share insights, and stay updated on new venue additions and advertising opportunities.
+            </p>
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 text-lg font-semibold"
+            >
+              <a 
+                href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Join our WhatsApp community
+              </a>
+            </Button>
           </Card>
         </div>
 
