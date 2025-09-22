@@ -1,24 +1,44 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, Sparkles, Zap } from "lucide-react";
 
 export const HeroSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {/* Floating Spell Elements */}
+        <div className="absolute top-20 left-10 animate-float">
+          <Sparkles className="h-8 w-8 text-st-blue/20" />
+        </div>
+        <div className="absolute top-40 right-20 animate-float animation-delay-1000">
+          <Zap className="h-6 w-6 text-st-green/20" />
+        </div>
+        <div className="absolute bottom-32 left-20 animate-float animation-delay-2000">
+          <Sparkles className="h-10 w-10 text-st-yellow/20" />
+        </div>
+        <div className="absolute bottom-20 right-10 animate-float animation-delay-500">
+          <Zap className="h-7 w-7 text-st-red/20" />
+        </div>
+        
+        {/* Gradient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-st-blue/10 rounded-full blur-xl animate-glow-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-st-green/10 rounded-full blur-xl animate-glow-pulse animation-delay-1500"></div>
+      </div>
       <div className="container mx-auto px-6 text-center relative z-10">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Hook Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight animate-fade-in">
             Visibility is a{" "}
-            <span className="text-transparent bg-gradient-brand bg-clip-text">
+            <span className="text-transparent bg-gradient-spell bg-clip-text animate-spell-cast bg-[length:200%_200%] inline-block">
               spell
             </span>
             . Cast it often.
           </h1>
 
           {/* Subheadline */}
-          <div className="space-y-4">
+          <div className="space-y-4 animate-fade-in-delayed">
             <p className="text-2xl md:text-3xl text-muted-foreground font-medium">
-              Smart TV billboards make your brand unmissable — turning fleeting attention into lasting memory.
+              Smart TV billboards make your brand unmissible — turning fleeting attention into lasting memory.
             </p>
             <p className="text-xl md:text-2xl text-muted-foreground">
               Familiarity isn't bought, it's built. Start building today.
@@ -26,19 +46,20 @@ export const HeroSection = () => {
           </div>
 
           {/* Primary CTA */}
-          <div className="pt-8">
+          <div className="pt-8 animate-scale-in animation-delay-600">
             <Button 
               asChild
               size="lg" 
-              className="text-lg px-8 py-4 bg-green-500 hover:bg-green-600 text-white shadow-brand transform hover:scale-105 transition-all duration-200"
+              className="text-lg px-8 py-4 bg-st-green hover:bg-st-green/90 text-white shadow-glow transform hover:scale-105 transition-all duration-300 hover:shadow-spell group"
             >
               <a 
                 href="https://app.spacetimeadvertising.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                👉 Start Your Campaign
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <Sparkles className="mr-2 h-5 w-5 group-hover:animate-spin" />
+                Start Your Campaign
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </a>
             </Button>
           </div>

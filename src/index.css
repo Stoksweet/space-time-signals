@@ -45,7 +45,10 @@
     /* Custom brand gradients */
     --gradient-brand: linear-gradient(135deg, hsl(var(--st-green)), hsl(var(--st-blue)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--st-green) / 0.1), hsl(var(--st-blue) / 0.1));
+    --gradient-spell: linear-gradient(45deg, hsl(var(--st-blue)), hsl(var(--st-green)), hsl(var(--st-yellow)));
     --shadow-brand: 0 10px 30px -10px hsl(var(--st-green) / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--st-green) / 0.4);
+    --shadow-spell: 0 0 60px hsl(var(--st-blue) / 0.3);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -104,5 +107,27 @@
 
   body {
     @apply bg-background text-foreground font-inter;
+  }
+}
+
+@layer utilities {
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+  
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+  
+  .animation-delay-1500 {
+    animation-delay: 1.5s;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
   }
 }
