@@ -22,7 +22,11 @@ const TVScreen = ({ position }: { position: [number, number, number] }) => {
     <mesh ref={meshRef} position={position}>
       {/* TV Screen Frame */}
       <boxGeometry args={[1.6, 0.9, 0.1]} />
-      <meshStandardMaterial color="#1a1a1a" />
+      <meshStandardMaterial 
+        color="#1a1a1a" 
+        transparent 
+        opacity={0.3}
+      />
       
       {/* Screen */}
       <mesh position={[0, 0, 0.051]}>
@@ -30,7 +34,9 @@ const TVScreen = ({ position }: { position: [number, number, number] }) => {
         <meshStandardMaterial 
           color="#0066cc" 
           emissive="#001122"
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.2}
+          transparent
+          opacity={0.4}
         />
       </mesh>
       
@@ -40,9 +46,9 @@ const TVScreen = ({ position }: { position: [number, number, number] }) => {
         <meshStandardMaterial 
           color="#0088ff" 
           transparent 
-          opacity={0.1}
+          opacity={0.05}
           emissive="#0066cc"
-          emissiveIntensity={0.1}
+          emissiveIntensity={0.05}
         />
       </mesh>
     </mesh>
@@ -53,10 +59,10 @@ const TVScreen = ({ position }: { position: [number, number, number] }) => {
 const TVGrid = () => {
   const screens = [];
   
-  // Create 3x3 grid
-  for (let x = -4; x <= 4; x += 4) {
-    for (let y = -3; y <= 3; y += 3) {
-      for (let z = -8; z <= 0; z += 4) {
+  // Create spread out grid
+  for (let x = -8; x <= 8; x += 8) {
+    for (let y = -6; y <= 6; y += 6) {
+      for (let z = -15; z <= -3; z += 6) {
         screens.push(
           <TVScreen 
             key={`${x}-${y}-${z}`} 
@@ -73,7 +79,7 @@ const TVGrid = () => {
 // Main Background Component
 export const TVScreensBackground = () => {
   return (
-    <div className="absolute inset-0 opacity-20">
+    <div className="absolute inset-0 opacity-10">
       <Canvas
         camera={{ position: [0, 0, 10], fov: 75 }}
         gl={{ alpha: true, antialias: true }}
