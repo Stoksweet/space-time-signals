@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap } from "lucide-react";
+import { TVScreensBackground } from "./TVScreensBackground";
 
 export const HeroSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+      {/* 3D TV Screens Background */}
+      <TVScreensBackground />
+      
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Floating Spell Elements */}
