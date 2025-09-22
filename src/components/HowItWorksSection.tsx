@@ -132,16 +132,49 @@ export const HowItWorksSection = () => {
               : "Ready to monetize your screens and delight customers?"
             }
           </p>
-          <Button asChild size="lg" className="bg-green-500 hover:bg-green-600 text-white">
-            <a 
-              href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              Get Started Today
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
-          </Button>
+          
+          {activeTab === 'advertiser' ? (
+            <div className="space-y-4">
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                <a 
+                  href="https://app.spacetimeadvertising.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Launch Advertising Platform
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                Or{" "}
+                <a 
+                  href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  get in touch via WhatsApp
+                </a>
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Button asChild size="lg" className="bg-green-500 hover:bg-green-600 text-white">
+                <a 
+                  href="https://firebasestorage.googleapis.com/v0/b/space-time-ads.firebasestorage.app/o/app-release.apk?alt=media&token=d5f08822-c4aa-4eeb-8fbb-bef57375fc47" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  download
+                >
+                  Download Site App (APK)
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                After installation, follow the instructions on your TV screen to get started
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>
