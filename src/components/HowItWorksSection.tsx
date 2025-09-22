@@ -173,6 +173,17 @@ export const HowItWorksSection = () => {
               <p className="text-sm text-muted-foreground">
                 After installation, follow the instructions on your TV screen to get started
               </p>
+              <p className="text-sm text-muted-foreground">
+                Need help?{" "}
+                <a 
+                  href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Contact us on WhatsApp
+                </a>
+              </p>
             </div>
           )}
         </div>
