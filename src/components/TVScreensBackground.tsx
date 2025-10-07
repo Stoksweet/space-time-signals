@@ -4,18 +4,31 @@ import { useFrame } from '@react-three/fiber';
 import { Group } from 'three';
 import * as THREE from 'three';
 
-// Individual Billboard Component
-const Billboard = ({ position, mousePosition }: { position: [number, number, number], mousePosition: { x: number, y: number } }) => {
+// Individual Billboard Component with vibrant colors
+const Billboard = ({ position, mousePosition, color }: { 
+  position: [number, number, number], 
+  mousePosition: { x: number, y: number },
+  color: string
+}) => {
   const meshRef = useRef<Group>(null);
+  const initialZ = position[2];
   
   useFrame((state) => {
     if (meshRef.current) {
+      // Forward movement (flying through space)
+      meshRef.current.position.z = (initialZ + (state.clock.elapsedTime * 1.5) % 30) - 15;
+      
+      // Reset position when too close
+      if (meshRef.current.position.z > 5) {
+        meshRef.current.position.z = initialZ - 30;
+      }
+      
       // Mouse-based parallax movement (fly-by effect)
       const parallaxStrength = 0.5;
-      meshRef.current.position.x = position[0] + mousePosition.x * parallaxStrength * (1 + position[2] * 0.1);
-      meshRef.current.position.y = position[1] - mousePosition.y * parallaxStrength * (1 + position[2] * 0.1);
+      meshRef.current.position.x = position[0] + mousePosition.x * parallaxStrength * (1 + Math.abs(meshRef.current.position.z) * 0.05);
+      meshRef.current.position.y = position[1] - mousePosition.y * parallaxStrength * (1 + Math.abs(meshRef.current.position.z) * 0.05);
       
-      // Gentle rotation based on mouse
+      // Gentle rotation based on mouse and movement
       meshRef.current.rotation.y = mousePosition.x * 0.3 + Math.sin(state.clock.elapsedTime * 0.3 + position[0]) * 0.1;
       meshRef.current.rotation.x = -mousePosition.y * 0.2 + Math.cos(state.clock.elapsedTime * 0.2 + position[1]) * 0.05;
     }
@@ -35,27 +48,27 @@ const Billboard = ({ position, mousePosition }: { position: [number, number, num
         />
       </mesh>
       
-      {/* Billboard Screen/Display */}
+      {/* Billboard Screen/Display - Bright with logo colors */}
       <mesh position={[0, 0, 0.08]}>
         <boxGeometry args={[3.2, 1.8, 0.05]} />
         <meshStandardMaterial 
-          color="#0066cc" 
-          emissive="#003366"
-          emissiveIntensity={0.3}
+          color={color} 
+          emissive={color}
+          emissiveIntensity={0.8}
           transparent
-          opacity={0.5}
+          opacity={0.9}
         />
       </mesh>
       
       {/* Glow Effect */}
       <mesh position={[0, 0, 0.12]}>
-        <boxGeometry args={[3.3, 1.9, 0.01]} />
+        <boxGeometry args={[3.4, 2.0, 0.01]} />
         <meshStandardMaterial 
-          color="#0088ff" 
+          color={color} 
           transparent 
-          opacity={0.08}
-          emissive="#0066cc"
-          emissiveIntensity={0.1}
+          opacity={0.3}
+          emissive={color}
+          emissiveIntensity={0.6}
         />
       </mesh>
       
@@ -84,20 +97,38 @@ const Billboard = ({ position, mousePosition }: { position: [number, number, num
   );
 };
 
-// Stars Component
+// Stars Component with forward movement
 const Stars = () => {
   const starsRef = useRef<THREE.Points>(null);
   
-  const starPositions = new Float32Array(1000 * 3);
-  for (let i = 0; i < 1000; i++) {
-    starPositions[i * 3] = (Math.random() - 0.5) * 100;
-    starPositions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-    starPositions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+  const starCount = 2000;
+  const starPositions = new Float32Array(starCount * 3);
+  const starSpeeds = new Float32Array(starCount);
+  
+  for (let i = 0; i < starCount; i++) {
+    starPositions[i * 3] = (Math.random() - 0.5) * 200;
+    starPositions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+    starPositions[i * 3 + 2] = (Math.random() - 0.5) * 100 - 50;
+    starSpeeds[i] = Math.random() * 0.5 + 0.5;
   }
   
   useFrame((state) => {
     if (starsRef.current) {
-      starsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+      const positions = starsRef.current.geometry.attributes.position.array as Float32Array;
+      
+      for (let i = 0; i < starCount; i++) {
+        // Move stars forward
+        positions[i * 3 + 2] += starSpeeds[i] * 0.3;
+        
+        // Reset star position when it passes the camera
+        if (positions[i * 3 + 2] > 10) {
+          positions[i * 3 + 2] = -50;
+          positions[i * 3] = (Math.random() - 0.5) * 200;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+        }
+      }
+      
+      starsRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
   
@@ -106,31 +137,38 @@ const Stars = () => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={1000}
+          count={starCount}
           array={starPositions}
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.1} color="#ffffff" transparent opacity={0.8} />
+      <pointsMaterial size={0.15} color="#ffffff" transparent opacity={0.9} sizeAttenuation />
     </points>
   );
 };
 
-// Grid of Billboards in Space
+// Grid of Billboards in Space with logo colors
 const BillboardGrid = ({ mousePosition }: { mousePosition: { x: number, y: number } }) => {
   const billboards = [];
   
-  // Create spread out billboard grid
-  for (let x = -10; x <= 10; x += 10) {
-    for (let y = -6; y <= 6; y += 6) {
-      for (let z = -18; z <= -6; z += 6) {
+  // Logo colors - vibrant green, red, blue, yellow
+  const colors = ['#2d7a4f', '#e63946', '#457b9d', '#f4a261'];
+  
+  let colorIndex = 0;
+  
+  // Create more spread out billboard grid
+  for (let x = -20; x <= 20; x += 13) {
+    for (let y = -10; y <= 10; y += 10) {
+      for (let z = -30; z <= -10; z += 10) {
         billboards.push(
           <Billboard 
             key={`${x}-${y}-${z}`} 
             position={[x, y, z]}
             mousePosition={mousePosition}
+            color={colors[colorIndex % colors.length]}
           />
         );
+        colorIndex++;
       }
     }
   }
@@ -157,11 +195,11 @@ export const TVScreensBackground = () => {
         camera={{ position: [0, 0, 10], fov: 75 }}
         gl={{ alpha: true, antialias: true }}
       >
-        {/* Space-themed Lighting */}
-        <ambientLight intensity={0.15} />
-        <directionalLight position={[10, 10, 5]} intensity={0.4} color="#0088ff" />
-        <directionalLight position={[-10, -10, -5]} intensity={0.3} color="#6366f1" />
-        <pointLight position={[0, 0, 5]} intensity={0.2} color="#0066cc" />
+        {/* Space-themed Lighting - brighter for vibrant billboards */}
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[10, 10, 5]} intensity={0.6} color="#ffffff" />
+        <directionalLight position={[-10, -10, -5]} intensity={0.4} color="#ffffff" />
+        <pointLight position={[0, 0, 5]} intensity={0.5} color="#ffffff" />
         
         {/* Stars */}
         <Stars />
