@@ -4,7 +4,7 @@ import { TVScreensBackground } from "./TVScreensBackground";
 
 export const HeroSection = () => {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center bg-[#0a0a0f] relative overflow-hidden">
       {/* 3D TV Screens Background */}
       <TVScreensBackground />
       
@@ -31,7 +31,7 @@ export const HeroSection = () => {
       <div className="container mx-auto px-6 text-center relative z-10">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Hook Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight animate-fade-in">
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight animate-fade-in text-white">
             Visibility is a{" "}
             <span className="text-transparent bg-gradient-spell bg-clip-text animate-spell-cast bg-[length:200%_200%] inline-block">
               spell
@@ -41,10 +41,10 @@ export const HeroSection = () => {
 
           {/* Subheadline */}
           <div className="space-y-4 animate-fade-in-delayed">
-            <p className="text-2xl md:text-3xl text-muted-foreground font-medium">
+            <p className="text-2xl md:text-3xl text-gray-200 font-medium">
               Smart TV billboards make your brand unmissible — turning fleeting attention into lasting memory.
             </p>
-            <p className="text-xl md:text-2xl text-muted-foreground">
+            <p className="text-xl md:text-2xl text-gray-300">
               Familiarity isn't bought, it's built. Start building today.
             </p>
           </div>
@@ -70,8 +70,8 @@ export const HeroSection = () => {
 
           {/* Scroll Indicator */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-primary rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-primary rounded-full mt-2 animate-pulse"></div>
+            <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
             </div>
           </div>
         </div>
