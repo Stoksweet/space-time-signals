@@ -1,70 +1,97 @@
 import { Canvas } from '@react-three/fiber';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
+import { Group } from 'three';
 
-// Individual TV Screen Component
-const TVScreen = ({ position }: { position: [number, number, number] }) => {
-  const meshRef = useRef<Mesh>(null);
+// Individual Billboard Component
+const Billboard = ({ position }: { position: [number, number, number] }) => {
+  const meshRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
-      // Gentle rotation animation
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.3;
-      meshRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 0.3 + position[1]) * 0.2;
+      // Gentle floating and rotation in space
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3 + position[0]) * 0.15;
+      meshRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 0.2 + position[1]) * 0.1;
       
-      // Floating motion
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.4 + position[0]) * 0.5;
+      // Slower floating motion
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.3 + position[0]) * 0.3;
+      meshRef.current.position.x = position[0] + Math.cos(state.clock.elapsedTime * 0.2 + position[2]) * 0.2;
     }
   });
 
   return (
-    <mesh ref={meshRef} position={position}>
-      {/* TV Screen Frame */}
-      <boxGeometry args={[1.6, 0.9, 0.1]} />
-      <meshStandardMaterial 
-        color="#1a1a1a" 
-        transparent 
-        opacity={0.3}
-      />
-      
-      {/* Screen */}
-      <mesh position={[0, 0, 0.051]}>
-        <boxGeometry args={[1.4, 0.7, 0.02]} />
+    <group ref={meshRef} position={position}>
+      {/* Billboard Frame/Structure */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[3.5, 2, 0.15]} />
         <meshStandardMaterial 
-          color="#0066cc" 
-          emissive="#001122"
-          emissiveIntensity={0.2}
-          transparent
+          color="#0a0a0a" 
+          metalness={0.8}
+          roughness={0.2}
+          transparent 
           opacity={0.4}
         />
       </mesh>
       
-      {/* Screen Glow Effect */}
-      <mesh position={[0, 0, 0.06]}>
-        <boxGeometry args={[1.5, 0.8, 0.01]} />
+      {/* Billboard Screen/Display */}
+      <mesh position={[0, 0, 0.08]}>
+        <boxGeometry args={[3.2, 1.8, 0.05]} />
+        <meshStandardMaterial 
+          color="#0066cc" 
+          emissive="#003366"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.5}
+        />
+      </mesh>
+      
+      {/* Glow Effect */}
+      <mesh position={[0, 0, 0.12]}>
+        <boxGeometry args={[3.3, 1.9, 0.01]} />
         <meshStandardMaterial 
           color="#0088ff" 
           transparent 
-          opacity={0.05}
+          opacity={0.08}
           emissive="#0066cc"
-          emissiveIntensity={0.05}
+          emissiveIntensity={0.1}
         />
       </mesh>
-    </mesh>
+      
+      {/* Support Structure - Left */}
+      <mesh position={[-1.8, -1.2, -0.1]}>
+        <boxGeometry args={[0.1, 0.6, 0.1]} />
+        <meshStandardMaterial 
+          color="#1a1a1a" 
+          metalness={0.7}
+          transparent 
+          opacity={0.3}
+        />
+      </mesh>
+      
+      {/* Support Structure - Right */}
+      <mesh position={[1.8, -1.2, -0.1]}>
+        <boxGeometry args={[0.1, 0.6, 0.1]} />
+        <meshStandardMaterial 
+          color="#1a1a1a" 
+          metalness={0.7}
+          transparent 
+          opacity={0.3}
+        />
+      </mesh>
+    </group>
   );
 };
 
-// 3x3 Grid of TV Screens
-const TVGrid = () => {
-  const screens = [];
+// Grid of Billboards in Space
+const BillboardGrid = () => {
+  const billboards = [];
   
-  // Create spread out grid
-  for (let x = -8; x <= 8; x += 8) {
+  // Create spread out billboard grid
+  for (let x = -10; x <= 10; x += 10) {
     for (let y = -6; y <= 6; y += 6) {
-      for (let z = -15; z <= -3; z += 6) {
-        screens.push(
-          <TVScreen 
+      for (let z = -18; z <= -6; z += 6) {
+        billboards.push(
+          <Billboard 
             key={`${x}-${y}-${z}`} 
             position={[x, y, z]} 
           />
@@ -73,7 +100,7 @@ const TVGrid = () => {
     }
   }
   
-  return <>{screens}</>;
+  return <>{billboards}</>;
 };
 
 // Main Background Component
@@ -84,13 +111,14 @@ export const TVScreensBackground = () => {
         camera={{ position: [0, 0, 10], fov: 75 }}
         gl={{ alpha: true, antialias: true }}
       >
-        {/* Lighting */}
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[10, 10, 5]} intensity={0.5} color="#0088ff" />
-        <directionalLight position={[-10, -10, -5]} intensity={0.3} color="#00cc44" />
+        {/* Space-themed Lighting */}
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[10, 10, 5]} intensity={0.6} color="#0088ff" />
+        <directionalLight position={[-10, -10, -5]} intensity={0.4} color="#6366f1" />
+        <pointLight position={[0, 0, 5]} intensity={0.3} color="#0066cc" />
         
-        {/* TV Screens Grid */}
-        <TVGrid />
+        {/* Billboard Grid */}
+        <BillboardGrid />
       </Canvas>
     </div>
   );
