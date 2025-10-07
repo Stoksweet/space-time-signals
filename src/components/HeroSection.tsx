@@ -73,10 +73,13 @@ export const HeroSection = () => {
             <Button 
               asChild
               size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300"
+              className="text-lg px-8 py-4 bg-white/95 text-gray-900 hover:bg-white hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
             >
-              <a href="#venue-owners">
+              <a 
+                href="https://chat.whatsapp.com/DTNYomQrONj2rKRQnbWKIp"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 I Own a Venue
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
