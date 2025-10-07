@@ -53,7 +53,7 @@ export const HeroSection = () => {
           </div>
 
           {/* Primary CTA */}
-          <div className="pt-8 animate-scale-in animation-delay-600">
+          <div className="pt-8 animate-scale-in animation-delay-600 flex flex-col gap-4 items-center">
             <Button 
               asChild
               size="lg" 
@@ -67,6 +67,18 @@ export const HeroSection = () => {
                 <Sparkles className="mr-2 h-5 w-5 group-hover:animate-spin" />
                 Start Your Campaign
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </Button>
+            
+            <Button 
+              asChild
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-4 border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300"
+            >
+              <a href="#venue-owners">
+                I Own a Venue
+                <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             </Button>
           </div>
