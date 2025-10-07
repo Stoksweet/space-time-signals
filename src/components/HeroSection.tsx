@@ -32,20 +32,23 @@ export const HeroSection = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Hook Headline */}
           <h1 className="text-5xl md:text-7xl font-bold leading-tight animate-fade-in text-white">
-            Visibility is a{" "}
+            Attention is modern{" "}
             <span className="text-transparent bg-gradient-spell bg-clip-text animate-spell-cast bg-[length:200%_200%] inline-block">
-              spell
+              gold
             </span>
-            . Cast it often.
+            . We help you mint it.
           </h1>
 
           {/* Subheadline */}
           <div className="space-y-4 animate-fade-in-delayed">
             <p className="text-2xl md:text-3xl text-gray-200 font-medium">
-              Smart TV billboards make your brand unmissible — turning fleeting attention into lasting memory.
+              Your ads on Smart TVs — everywhere people look but never expect.
             </p>
             <p className="text-xl md:text-2xl text-gray-300">
-              Familiarity isn't bought, it's built. Start building today.
+              Turn idle screens into earning machines.
+            </p>
+            <p className="text-xl md:text-2xl text-gray-300">
+              Create, launch, and earn from campaigns in minutes.
             </p>
           </div>
 
